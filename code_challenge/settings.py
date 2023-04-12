@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_filters",
     "crop",
-    "weather"
+    "weather",
+    "drf_yasg"
 ]
 
 REST_FRAMEWORK = {
