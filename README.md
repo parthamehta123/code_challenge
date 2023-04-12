@@ -4,9 +4,9 @@
 
 - Python Version: python>=3.9
 - Create and activate a virtual environment - using Makefile or manual 
-  - make venv or manual: 
-  - python3 -m venv <env>
-  - source <env>/bin/activate 
+  - make venv or manual
+  - python3 -m venv venv
+  - source venv/bin/activate
 - Set Django settings 
   - export DJANGO_SETTINGS_MODULE="code_challenge.settings"
 - Apply Database Migrations 
