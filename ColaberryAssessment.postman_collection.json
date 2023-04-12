@@ -1,0 +1,138 @@
+{
+	"info": {
+		"_postman_id": "08a2dedc-9af4-40cb-8e75-8788db1c97bc",
+		"name": "ColaberryAssessment",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "api_one_http://localhost:8000/api/weather",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/weather",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"weather"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "api_one_pagination_http://localhost:8000/api/weather?page=<x>&date=<x>&station_id=<x>",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/weather?page=172996",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"weather"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "172996"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "api_two_http://localhost:8000/api/weather/stats",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/weather/stats",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"weather",
+						"stats"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "api_two_pagination_http://localhost:8000/api/weather/stats",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/weather/stats?page=10",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"weather",
+						"stats"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "api_two_paginationandqueryparams_http://localhost:8000/api/weather/stats",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/weather/stats?page=1&year=1989&station_id=USC00255080",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"weather",
+						"stats"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "year",
+							"value": "1989"
+						},
+						{
+							"key": "station_id",
+							"value": "USC00255080"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
