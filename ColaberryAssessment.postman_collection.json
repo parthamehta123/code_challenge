@@ -6,17 +6,17 @@
 	},
 	"item": [
 		{
-			"name": "api_one_http://localhost:8000/api/weather",
+			"name": "api_one_http://localhost:8001/api/weather",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8000/api/weather",
+					"raw": "http://localhost:8001/api/weather",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "8000",
+					"port": "8001",
 					"path": [
 						"api",
 						"weather"
@@ -26,17 +26,17 @@
 			"response": []
 		},
 		{
-			"name": "api_one_pagination_http://localhost:8000/api/weather?page=<x>&date=<x>&station_id=<x>",
+			"name": "api_one_pagination_http://localhost:8001/api/weather?page=<x>&date=<x>&station_id=<x>",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8000/api/weather?page=172996",
+					"raw": "http://localhost:8001/api/weather?page=172996",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "8000",
+					"port": "8001",
 					"path": [
 						"api",
 						"weather"
@@ -52,17 +52,17 @@
 			"response": []
 		},
 		{
-			"name": "api_two_http://localhost:8000/api/weather/stats",
+			"name": "api_two_http://localhost:8001/api/weather/stats",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8000/api/weather/stats",
+					"raw": "http://localhost:8001/api/weather/stats",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "8000",
+					"port": "8001",
 					"path": [
 						"api",
 						"weather",
@@ -73,17 +73,17 @@
 			"response": []
 		},
 		{
-			"name": "api_two_pagination_http://localhost:8000/api/weather/stats",
+			"name": "api_two_pagination_http://localhost:8001/api/weather/stats",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8000/api/weather/stats?page=10",
+					"raw": "http://localhost:8001/api/weather/stats?page=10",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "8000",
+					"port": "8001",
 					"path": [
 						"api",
 						"weather",
@@ -100,17 +100,17 @@
 			"response": []
 		},
 		{
-			"name": "api_two_paginationandqueryparams_http://localhost:8000/api/weather/stats",
+			"name": "api_two_paginationandqueryparams_http://localhost:8001/api/weather/stats",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8000/api/weather/stats?page=1&year=1989&station_id=USC00255080",
+					"raw": "http://localhost:8001/api/weather/stats?page=1&year=1989&station_id=USC00255080",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "8000",
+					"port": "8001",
 					"path": [
 						"api",
 						"weather",
