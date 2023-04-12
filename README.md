@@ -39,11 +39,11 @@
   
   Examples below and refer api postman screenshots in Answers folder for the following GET api responses:
 
-  http://localhost:8000/api/weather
-  http://localhost:8000/api/weather?page=172996
-  http://localhost:8000/api/weather/stats
-  http://localhost:8000/api/weather/stats?page=10
-  http://localhost:8000/api/weather/stats?page=1&year=1989&station_id=USC00255080
+  http://localhost:8001/api/weather
+  http://localhost:8001/api/weather?page=172996
+  http://localhost:8001/api/weather/stats
+  http://localhost:8001/api/weather/stats?page=10
+  http://localhost:8001/api/weather/stats?page=1&year=1989&station_id=USC00255080
 
 ***Download REST API Export I have done from the below link***
 
