@@ -30,8 +30,8 @@
         
 ***REST APIs***
         
-- Django REST Framework was used to develop the following 3 REST API GET endpoints with default pagination
-  50 records and filter arguments per assignment:
+- Flask REST Framework was used to develop the following 2 REST API GET endpoints with default pagination
+  10 records and filter arguments per assignment:
   - /api/weather 
   - /api/weather/stats 
   
