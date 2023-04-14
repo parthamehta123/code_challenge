@@ -48,3 +48,24 @@
 ***Download REST API Export I have done from the below link***
 
 https://github.com/parthamehta123/code_challenge/blob/master/ColaberryAssessment.postman_collection.json
+
+***Including a Swagger/OpenAPI endpoint that provides automatic documentation of your API.***
+
+To include a Swagger/OpenAPI endpoint in a Django project, we have to use the drf-yasg library which provides an easy-to-use and customizable interface for generating API documentation. Here are the steps:
+
+1. Install the drf-yasg library using pip:
+
+***pip install drf-yasg***
+
+2. Add the drf_yasg app to the list of installed apps in your Django project's settings.py file:
+
+***INSTALLED_APPS = [
+    # other apps
+    'drf_yasg',
+]***
+
+<img width="1792" alt="image" src="https://user-images.githubusercontent.com/25328046/231945306-c00c3df7-fd99-48df-aa6c-93d7576cceb7.png">
+
+3. Adding the drf_yasg.views and rest_framework URLs to the project's urls.py file: (Here we add the code for the Swagger endpoint to "code_challenge/code_challenge/urls.py". This file is the main URL configuration for our project, so it's a good place to add any additional URL patterns.
+
+<img width="1792" alt="image" src="https://user-images.githubusercontent.com/25328046/231945240-1f6071f2-e702-41b2-b4d0-9359fcd6cf96.png">
