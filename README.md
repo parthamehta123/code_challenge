@@ -77,5 +77,3 @@ To include a Swagger/OpenAPI endpoint in a Django project, we have to use the dr
 Then go to the link which shows up in the command line and test out if the Swagger requirement of auto-documentation is working or not
 
 <img width="1792" alt="image" src="https://user-images.githubusercontent.com/25328046/231964094-a3128a95-f081-4514-92ab-3240a7b00a8a.png">
-
-***pip install drf-yasg***
