@@ -44,6 +44,10 @@
   http://localhost:8001/api/weather/stats
   http://localhost:8001/api/weather/stats?page=10
   http://localhost:8001/api/weather/stats?page=1&year=1989&station_id=USC00255080
+  
+  To start the Flask Server, look for the commands in the below screenshot:
+  
+  ![image](https://user-images.githubusercontent.com/25328046/232164950-8095c153-9060-42c2-b695-3a88fbdd4b79.png)
 
 ***Download REST API Export I have done from the below link***
 
