@@ -1,3 +1,5 @@
+# This file has the code for our lambda function which is triggered when s3 event happens / there's a scheduled trigger too.
+
 import json
 import boto3
 import os
