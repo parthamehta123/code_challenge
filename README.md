@@ -86,27 +86,37 @@ Swagger Execution Screenshot:
 
 <img width="1792" alt="image" src="https://user-images.githubusercontent.com/25328046/232181362-bf16e218-3fae-4f5d-9ff4-596983ac61ef.png">
 
-***DEPLOYMENT APPROACH***
+***DEPLOYMENT APPROACH(I Have Already Done This on my AWS Account and source code py files have been attached too in this repository)***
 
 Here's how I would approach this:
 
-- I would first set up a database instance on AWS RDS: You can use the AWS RDS service to create a Aurora MySQL database instance that can be accessed by your AWS Glue jobs / AWS Glue Crawlers and EMR clusters.
+- I have first set up a database instance on AWS RDS: I used the AWS RDS service to create a Aurora MySQL database instance that can be accessed by the AWS Glue jobs / AWS Glue Crawlers and EMR clusters.
 
-- Create an AWS Glue job for data ingestion: You can also create an AWS Glue job that reads data from the raw text files in S3, performs data cleansing and transformation, and writes the processed data to the MySQL database. You can schedule the job to run on a daily or weekly basis using a CloudWatch Event trigger. We can also create AWS Glue Crawler that crawls through S3 folders and writes the data to Glue Data Catalog so that the data could then be retrieved using Athena and then perform analytics and just store it in Redshift cluster DB table.
+- I created an AWS Glue job for data ingestion: This AWS Glue job reads data from the raw text files in S3, performs data cleansing and transformation, and writes the processed data to the MySQL database. Then, it has been scheduled to run on a daily or weekly basis using a CloudWatch Event trigger. We can also create AWS Glue Crawler that crawls through S3 folders and writes the data to Glue Data Catalog so that the data could then be retrieved using Athena and then perform analytics and just store it in Redshift cluster DB table.
 
-- Create an EMR cluster for data analysis: You can create an EMR cluster with Hadoop, Spark, and Hive to perform data analysis tasks. You can use Spark to calculate the average maximum temperature, average minimum temperature, and total accumulated precipitation for each year and station, and write the results to a Redshift table.
+- Create an EMR cluster for data analysis: I created an EMR cluster with Hadoop, Spark, and Hive to perform data analysis tasks. I mainly used Spark to calculate the average maximum temperature, average minimum temperature, and total accumulated precipitation for each year and station, and write the results to a Redshift table. I also created an External Table using the below query in HIVE.
 
-- Set up a Redshift cluster for storing results: You can use AWS Redshift to store the results of the data analysis. You can create a Redshift cluster and a table to store the calculated statistics.
+CREATE EXTERNAL TABLE weather_data(
+  station_id STRING,
+  date DATE,
+  max_temp FLOAT,
+  min_temp FLOAT,
+  precipitation FLOAT
+)
+STORED BY 'org.apache.hadoop.hive.jdbc.storagehandler.JdbcStorageHandler'
+TBLPROPERTIES (
+  "jdbc.driver.class"="org.postgresql.Driver",
+  "hive.jdbc.database.type"="POSTGRES",
+  "hive.jdbc.database.name"="<database-name>",
+  "hive.jdbc.url"="jdbc:postgresql://<host>:<port>/<database-name>",
+  "hive.jdbc.user.name"="<user>",
+  "hive.jdbc.password"="<password>",
+  "hive.jdbc.input.table.name"="<table-name>"
+);
 
-- Trigger data ingestion and analysis using AWS Lambda: You can create an AWS Lambda function that triggers the AWS Glue job for data ingestion and the EMR cluster for data analysis. You can schedule the Lambda function to run on a daily or weekly basis using a CloudWatch Event trigger.
+- Then, I set up a Redshift cluster for storing results: I used AWS Redshift to store the results of the data analysis. This Redshift cluster and a table in it is used to store the calculated statistics.
 
-- Expose the data through a REST API: You can use a web framework such as Flask or Django to create a REST API that exposes the ingested data and the calculated statistics. You can deploy the API on an EC2 instance or an AWS Elastic Beanstalk environment.
-
-- Set up monitoring and logging: You can use AWS CloudWatch to monitor your AWS Glue jobs, EMR clusters, Redshift clusters, and Lambda functions. You can also use other AWS services such as AWS X-Ray or AWS Elasticsearch for advanced monitoring and tracing.
-
-- Set up security: You can use AWS Identity and Access Management (IAM) to manage access to your AWS resources. You can create IAM roles and policies that grant least privilege access to your application and data processing resources, and enable encryption for data at rest and in transit.
-
-- Note that this approach may require more setup and configuration compared to the previous approach, but it can provide more scalability, performance, and flexibility for handling large volumes of data. You would set up two separate CloudWatch event rules for triggering the AWS Glue job and the AWS Lambda function.
+- I triggered data ingestion and analysis using AWS Lambda: So, basically there is an AWS Lambda function that triggers the AWS Glue job for data ingestion and the EMR cluster for data analysis. This has been scheduled so the Lambda function can run on a daily basis using a CloudWatch Event trigger.
 
 - The first event rule would trigger the AWS Glue job on a daily or weekly basis to perform the data ingestion and processing tasks. The event rule would specify the AWS Glue job as the target and set the schedule for the job to run.
 
@@ -115,6 +125,13 @@ Here's how I would approach this:
 - But here, in my case, I have used just single event rule on CloudWatch to just trigger the Lambda which finally triggers my Glue Job and waits for this job to complete it's process and I have put a sleep method before it finishes and only once it finishes it will trigger EMR.
 
 - Although, by separating the event rules, you can have more control over the scheduling and dependencies of the tasks. For example, you can schedule the AWS Glue job to run at a different time than the AWS Lambda function, or you can set up the AWS Lambda function to trigger multiple AWS Glue jobs or EMR clusters.
+
+***To-Do***
+- Expose the data through a REST API: You can use a web framework such as Flask or Django to create a REST API that exposes the ingested data and the calculated statistics. You can deploy the API on an EC2 instance or an AWS Elastic Beanstalk environment.
+
+- Set up monitoring and logging: You can use AWS CloudWatch to monitor your AWS Glue jobs, EMR clusters, Redshift clusters, and Lambda functions. You can also use other AWS services such as AWS X-Ray or AWS Elasticsearch for advanced monitoring and tracing.
+
+- Set up security: You can use AWS Identity and Access Management (IAM) to manage access to your AWS resources. You can create IAM roles and policies that grant least privilege access to your application and data processing resources, and enable encryption for data at rest and in transit.
 
 ***SUMMARY OF RESOURCES REQUIRED***
 
@@ -138,5 +155,7 @@ The total number of event rules, Lambda functions, and Glue jobs required for th
   - CloudWatch and other AWS services for monitoring and logging.
 - Security:
   - IAM roles and policies to manage access to AWS resources and enable encryption for data at rest and in transit.
+
+- Note that this approach may require a lot more setup and configuration than imagined by just looking at the code and documentation/explanation of my approach, but it can provide a lot of scalability, performance, and flexibility for handling large volumes of data. You would set up two separate CloudWatch event rules for triggering the AWS Glue job and the AWS Lambda function.
 
 Please note that these numbers are approximate and may vary based on specific design choices and implementation details.
