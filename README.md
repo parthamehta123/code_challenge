@@ -159,3 +159,7 @@ The total number of event rules, Lambda functions, and Glue jobs required for th
 - Note that this approach may require a lot more setup and configuration than imagined by just looking at the code and documentation/explanation of my approach, but it can provide a lot of scalability, performance, and flexibility for handling large volumes of data. You would set up two separate CloudWatch event rules for triggering the AWS Glue job and the AWS Lambda function.
 
 Please note that these numbers are approximate and may vary based on specific design choices and implementation details.
+
+***Screenshot attached For Glue Job Run Summary/Page***
+
+<img width="1792" alt="image" src="https://user-images.githubusercontent.com/25328046/232839110-4470f1b0-dfe5-4231-8e84-ac257a19afb4.png">
