@@ -1,3 +1,14 @@
+# This is a file/code file placed in an S3 bucket for deployment purpose or for entire architecture of this project to run on AWS Cloud.
+# Once Lambda is triggered due to an S3 event of adding text files to either wx_data/ or yld_data/ folders, this Lambda triggers our Glue Job.
+# I have put a time.sleep(seconds) in my lambda function so that EMR job waits until Glue Job has finished it's work and once this Glue Job
+# completes its work of writing data to MySQL DB Tables crop_data/weather_data in the DB colaberryrdsdb, EMR starts it work.
+
+# Also, EMR code flow is shown in the file lambda_function.py which is in this repository, and when EMR runs, it takes this file in consideration of the
+# steps it takes and this file writes the analysed data / calculated statistics on the weather data to a Redshift Table in the Redshift Cluster.
+
+# Finally, REST API can be again done, but this time to work with Cloud Databases, as our data is on cloud now instead of local PyCharm / sqlite3 db
+# as I had used Django and Flask on local system to build this entire project before which has been explained in README.md file of this repository.
+
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 from pyspark.sql import DataFrameWriter
