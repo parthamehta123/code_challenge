@@ -1,8 +1,7 @@
-# This file is just for local testing purposes as a standalone application.
 import mysql.connector
 
 # create a connection to the MySQL database
-cnx = mysql.connector.connect(user='admin', password='<password>',
+cnx = mysql.connector.connect(user='admin', password='Password123',
                               host='colaberrydb.ctkwfn0vycpa.us-east-2.rds.amazonaws.com',
                               database='colaberryrdsdb')
 
