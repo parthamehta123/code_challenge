@@ -108,7 +108,7 @@ def main():
         .option("header", False) \
         .schema(schema) \
         .load("s3://colaberrycodechallenges3/yld_data/US_corn_grain_yield.txt") \
-        .toDF("year", "corn_yield")
+        .toDF("year", "corn_yield", "created_timestamp", "updated_timestamp")
 
     # check if a column exists
     if "year" in yld_df.columns:
