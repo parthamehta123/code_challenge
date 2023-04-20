@@ -18,7 +18,7 @@ spark = SparkSession.builder \
 aurora_url = "jdbc:mysql://colaberrydb.ctkwfn0vycpa.us-east-2.rds.amazonaws.com:3306/colaberryrdsdb"
 properties = {
     "user": "admin",
-    "password": "Password123",
+    "password": "<password>",
     "driver": "com.mysql.jdbc.Driver"
 }
 weather_data = spark.read.jdbc(url=aurora_url, table="weather_data", properties=properties)
@@ -79,7 +79,7 @@ redshift_url = "jdbc:redshift://colaberryredshiftnewcluster.803471918786.us-east
                ":5439/dev"
 redshift_properties = {
     "user": "admin",
-    "password": "MadaraItachi123",
+    "password": "<password>",
     "driver": "com.amazon.redshift.jdbc.Driver"
 }
 statistics_writer = DataFrameWriter(statistics)
