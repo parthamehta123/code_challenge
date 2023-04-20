@@ -1,5 +1,3 @@
-# This is a file/code file placed in the script section of my Glue Job for deployment purpose or for entire architecture of this project to run on AWS Cloud.
-
 # Cleaning, Transforming and Ingesting Crop Data Right Now and Writing this Data to PostgreSQL on RDS
 
 # Import the required libraries and set up the AWS Glue context:
@@ -101,6 +99,8 @@ def main():
     schema = StructType([
         StructField("year", IntegerType(), False),
         StructField("corn_yield", DoubleType(), False),
+        StructField("created_timestamp", TimestampType(), False),
+        StructField("updated_timestamp", TimestampType(), False)
     ])
 
     yld_df = spark.read.format("csv") \
@@ -120,6 +120,8 @@ def main():
     # cast data types
     yld_df = yld_df.withColumn("year", yld_df["year"].cast(IntegerType()))
     yld_df = yld_df.withColumn("corn_yield", yld_df["corn_yield"].cast(DoubleType()))
+    yld_df = yld_df.withColumn("created_timestamp", current_timestamp())
+    yld_df = yld_df.withColumn("updated_timestamp", current_timestamp())
 
     # group by year and calculate mean corn yield
     df_agg = yld_df.groupBy("year").agg(avg("corn_yield").alias("mean_corn_yield"))
@@ -138,7 +140,7 @@ def main():
     connection = pymysql.connect(
         host='colaberrydb.ctkwfn0vycpa.us-east-2.rds.amazonaws.com',
         user='admin',
-        password='<password>',
+        password='Password123',
         db='colaberryrdsdb',
         charset='utf8mb4',
         cursorclass=pymysql.cursors.DictCursor
@@ -146,7 +148,9 @@ def main():
 
     df_cleaned = df_cleaned.selectExpr(
         'year AS year',
-        'mean_corn_yield AS corn_yield'
+        'mean_corn_yield AS corn_yield',
+        'created_timestamp AS created_timestamp',
+        'updated_timestamp AS updated_timestamp'
     )
 
     df_cleaned.show()
@@ -168,7 +172,9 @@ def main():
             create_table_query = """
             CREATE TABLE crop_data (
             year INT NOT NULL,
-            corn_yield DOUBLE NOT NULL
+            corn_yield DOUBLE NOT NULL,
+            created_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            updated_timestamp TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
             ) ENGINE=InnoDB;
             """
             # create a cursor object
@@ -191,7 +197,7 @@ def main():
         connection = pymysql.connect(
             host='colaberrydb.ctkwfn0vycpa.us-east-2.rds.amazonaws.com',
             user='admin',
-            password='<password>',
+            password='Password123',
             db='colaberryrdsdb',
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor
@@ -218,7 +224,7 @@ def main():
         connection = pymysql.connect(
             host='colaberrydb.ctkwfn0vycpa.us-east-2.rds.amazonaws.com',
             user='admin',
-            password='<password>',
+            password='Password123',
             db='colaberryrdsdb',
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor
@@ -248,7 +254,7 @@ def main():
             # set properties for the JDBC driver
             properties = {
                 "user": "admin",
-                "password": "<password>",
+                "password": "Password123",
                 "driver": "com.mysql.jdbc.Driver"
             }
 
@@ -276,7 +282,7 @@ def main():
         connection = pymysql.connect(
             host='colaberrydb.ctkwfn0vycpa.us-east-2.rds.amazonaws.com',
             user='admin',
-            password='<password>',
+            password='Password123',
             db='colaberryrdsdb',
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor
@@ -330,11 +336,13 @@ def main():
 
     # Define your schema with "type" field for "station_id" column
     schema = StructType([
-        StructField("date", IntegerType(), False),
+        StructField("date", DateType(), False),
         StructField("max_temp", DoubleType(), False),
         StructField("min_temp", DoubleType(), False),
         StructField("precipitation", DoubleType(), False),
-        StructField("station_id", StringType(), False)
+        StructField("station_id", StringType(), False),
+        StructField("created_timestamp", TimestampType(), False),
+        StructField("updated_timestamp", TimestampType(), False)
     ])
 
     # Convert the schema to a JSON string
@@ -373,13 +381,13 @@ def main():
         df = df.selectExpr("split(col0, '\t')[0] as date", "split(col0, '\t')[1] as max_temp",
                            "split(col0, '\t')[2] as min_temp", "split(col0, '\t')[3] as precipitation")
         # cast data types
-        df = df.withColumn("date", df["date"].cast(IntegerType()))
+        df = df.withColumn("date", df["date"].cast(DateType()))
         df = df.withColumn("max_temp", df["max_temp"].cast(DoubleType()))
         df = df.withColumn("min_temp", df["min_temp"].cast(DoubleType()))
         df = df.withColumn("precipitation", df["precipitation"].cast(DoubleType()))
+        df = df.withColumn("created_timestamp", current_timestamp())
+        df = df.withColumn("updated_timestamp", current_timestamp())
         # extract station_id from file name
-        # df = df.withColumn("station_id", split(input_file_name(), "/")[-1]) \
-        #       .withColumn("station_id", regexp_extract("station_id", r"^(.*?)\.txt$", 1))
         df = df.withColumn("station_id", regexp_extract(input_file_name(), r".*/(.+)\.txt$", 1))
         if weather_df is None:
             weather_df = df
@@ -388,7 +396,7 @@ def main():
 
     # rename columns
     weather_df = weather_df.select(col("date"), col("max_temp"), col("min_temp"), col("precipitation"),
-                                   col("station_id"))
+                                   col("station_id"), col("created_timestamp"), col("updated_timestamp"))
 
     logger.info("weather_df :: ")
     weather_df.show()
@@ -400,7 +408,7 @@ def main():
     table_name = "weather_data"
     properties = {
         "user": "admin",
-        "password": "<password>",
+        "password": "Password123",
         "driver": "com.mysql.jdbc.Driver"
     }
 
@@ -408,7 +416,7 @@ def main():
     connection = pymysql.connect(
         host='colaberrydb.ctkwfn0vycpa.us-east-2.rds.amazonaws.com',
         user='admin',
-        password='<password>',
+        password='Password123',
         db='colaberryrdsdb',
         charset='utf8mb4',
         cursorclass=pymysql.cursors.DictCursor
@@ -430,11 +438,13 @@ def main():
             # Define the SQL query to create the table
             create_table_query = """
             CREATE TABLE weather_data (
-            date INT NOT NULL,
+            date DATE NOT NULL,
             max_temp DOUBLE NOT NULL,
             min_temp DOUBLE NOT NULL,
             precipitation DOUBLE NOT NULL,
-            station_id VARCHAR(30) NOT NULL
+            station_id VARCHAR(30) NOT NULL,
+            created_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            updated_timestamp TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
             ) ENGINE=InnoDB;
             """
             # create a cursor object
@@ -457,7 +467,7 @@ def main():
         connection = pymysql.connect(
             host='colaberrydb.ctkwfn0vycpa.us-east-2.rds.amazonaws.com',
             user='admin',
-            password='<password>',
+            password='Password123',
             db='colaberryrdsdb',
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor
@@ -484,7 +494,7 @@ def main():
         connection = pymysql.connect(
             host='colaberrydb.ctkwfn0vycpa.us-east-2.rds.amazonaws.com',
             user='admin',
-            password='<password>',
+            password='Password123',
             db='colaberryrdsdb',
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor
@@ -514,7 +524,7 @@ def main():
             # set properties for the JDBC driver
             properties = {
                 "user": "admin",
-                "password": "<password>",
+                "password": "Password123",
                 "driver": "com.mysql.jdbc.Driver"
             }
 
@@ -542,7 +552,7 @@ def main():
         connection = pymysql.connect(
             host='colaberrydb.ctkwfn0vycpa.us-east-2.rds.amazonaws.com',
             user='admin',
-            password='<password>',
+            password='Password123',
             db='colaberryrdsdb',
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor
