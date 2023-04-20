@@ -1,8 +1,4 @@
-# This is a file/code file placed in the script section of my Glue Job for deployment purpose or for entire architecture of this project 
-
-# and it's only for Crop Data Ingestion to run on AWS Cloud.
-
-# Cleaning, Transforming and Ingesting Crop Data Right Now and Writing this Data to MySQL on RDS
+# Cleaning, Transforming and Ingesting Crop Data Right Now and Writing this Data to PostgreSQL on RDS
 
 # Import the required libraries and set up the AWS Glue context:
 
@@ -113,7 +109,7 @@ def main():
         .option("header", False) \
         .schema(schema) \
         .load(args['s3_input_path'] + "US_corn_grain_yield.txt") \
-        .toDF("year", "corn_yield", "created_timestamp", "updated_timestamp")
+        .toDF("year", "corn_yield")
 
     # check if a column exists
     if "year" in yld_df.columns:
@@ -153,9 +149,7 @@ def main():
 
     df_cleaned = df_cleaned.selectExpr(
         'year AS year',
-        'mean_corn_yield AS corn_yield',
-        'created_timestamp AS created_timestamp',
-        'updated_timestamp AS updated_timestamp'
+        'mean_corn_yield AS corn_yield'
     )
 
     df_cleaned.show()

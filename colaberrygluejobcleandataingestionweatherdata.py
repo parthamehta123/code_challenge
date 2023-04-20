@@ -1,4 +1,4 @@
-# Cleaning, Transforming and Ingesting Crop Data Right Now and Writing this Data to MySQL on RDS
+# Cleaning, Transforming and Ingesting Crop Data Right Now and Writing this Data to PostgreSQL on RDS
 
 # Import the required libraries and set up the AWS Glue context:
 

@@ -1,4 +1,4 @@
-# Cleaning, Transforming and Ingesting Crop Data Right Now and Writing this Data to MySQL on RDS
+# Cleaning, Transforming and Ingesting Crop Data Right Now and Writing this Data to PostgreSQL on RDS
 
 # Import the required libraries and set up the AWS Glue context:
 
@@ -108,7 +108,7 @@ def main():
         .option("header", False) \
         .schema(schema) \
         .load("s3://colaberrycodechallenges3/yld_data/US_corn_grain_yield.txt") \
-        .toDF("year", "corn_yield", "created_timestamp", "updated_timestamp")
+        .toDF("year", "corn_yield")
 
     # check if a column exists
     if "year" in yld_df.columns:
