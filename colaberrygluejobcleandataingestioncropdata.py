@@ -1,4 +1,8 @@
-# Cleaning, Transforming and Ingesting Crop Data Right Now and Writing this Data to PostgreSQL on RDS
+# This is a file/code file placed in the script section of my Glue Job for deployment purpose or for entire architecture of this project 
+
+# and it's only for Crop Data Ingestion to run on AWS Cloud.
+
+# Cleaning, Transforming and Ingesting Crop Data Right Now and Writing this Data to MySQL on RDS
 
 # Import the required libraries and set up the AWS Glue context:
 
