@@ -9,8 +9,8 @@ def lambda_handler(event, context):
     glue_response = None
     print("event :: ", event)
     glue = boto3.client('glue')
-    emr = boto3.client('emr', region_name='us-east-2', aws_access_key_id='AKIA3WEVIQ3BMQ3GU7VY',
-                       aws_secret_access_key='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')
+    emr = boto3.client('emr', region_name='us-east-2', aws_access_key_id='<aws_access_key_id>',
+                       aws_secret_access_key='<aws_secret_access_key>')
     backend_code = "s3://colaberrycodefilelocationforemr/colaberrypysparkweatheranalysiscodeforemrpart.py"
 
     # Extract the S3 bucket and key for the uploaded files
