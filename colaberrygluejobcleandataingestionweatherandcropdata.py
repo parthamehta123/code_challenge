@@ -140,7 +140,7 @@ def main():
     connection = pymysql.connect(
         host='colaberrydb.ctkwfn0vycpa.us-east-2.rds.amazonaws.com',
         user='admin',
-        password='Password123',
+        password='<password>',
         db='colaberryrdsdb',
         charset='utf8mb4',
         cursorclass=pymysql.cursors.DictCursor
@@ -197,7 +197,7 @@ def main():
         connection = pymysql.connect(
             host='colaberrydb.ctkwfn0vycpa.us-east-2.rds.amazonaws.com',
             user='admin',
-            password='Password123',
+            password='<password>',
             db='colaberryrdsdb',
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor
@@ -224,7 +224,7 @@ def main():
         connection = pymysql.connect(
             host='colaberrydb.ctkwfn0vycpa.us-east-2.rds.amazonaws.com',
             user='admin',
-            password='Password123',
+            password='<password>',
             db='colaberryrdsdb',
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor
@@ -254,7 +254,7 @@ def main():
             # set properties for the JDBC driver
             properties = {
                 "user": "admin",
-                "password": "Password123",
+                "password": "<password>",
                 "driver": "com.mysql.jdbc.Driver"
             }
 
@@ -282,7 +282,7 @@ def main():
         connection = pymysql.connect(
             host='colaberrydb.ctkwfn0vycpa.us-east-2.rds.amazonaws.com',
             user='admin',
-            password='Password123',
+            password='<password>',
             db='colaberryrdsdb',
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor
@@ -408,7 +408,7 @@ def main():
     table_name = "weather_data"
     properties = {
         "user": "admin",
-        "password": "Password123",
+        "password": "<password>",
         "driver": "com.mysql.jdbc.Driver"
     }
 
@@ -416,7 +416,7 @@ def main():
     connection = pymysql.connect(
         host='colaberrydb.ctkwfn0vycpa.us-east-2.rds.amazonaws.com',
         user='admin',
-        password='Password123',
+        password='<password>',
         db='colaberryrdsdb',
         charset='utf8mb4',
         cursorclass=pymysql.cursors.DictCursor
@@ -467,7 +467,7 @@ def main():
         connection = pymysql.connect(
             host='colaberrydb.ctkwfn0vycpa.us-east-2.rds.amazonaws.com',
             user='admin',
-            password='Password123',
+            password='<password>',
             db='colaberryrdsdb',
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor
@@ -494,7 +494,7 @@ def main():
         connection = pymysql.connect(
             host='colaberrydb.ctkwfn0vycpa.us-east-2.rds.amazonaws.com',
             user='admin',
-            password='Password123',
+            password='<password>',
             db='colaberryrdsdb',
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor
@@ -552,7 +552,7 @@ def main():
         connection = pymysql.connect(
             host='colaberrydb.ctkwfn0vycpa.us-east-2.rds.amazonaws.com',
             user='admin',
-            password='Password123',
+            password='<password>',
             db='colaberryrdsdb',
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor
