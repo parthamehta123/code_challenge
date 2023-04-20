@@ -1,3 +1,5 @@
+# This is a file/code file placed in the script section of my Glue Job for deployment purpose or for entire architecture of this project to run on AWS Cloud.
+
 # Cleaning, Transforming and Ingesting Crop Data Right Now and Writing this Data to PostgreSQL on RDS
 
 # Import the required libraries and set up the AWS Glue context:
