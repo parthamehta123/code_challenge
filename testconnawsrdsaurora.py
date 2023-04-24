@@ -1,7 +1,7 @@
 import mysql.connector
 
 # create a connection to the MySQL database
-cnx = mysql.connector.connect(user='admin', password='Password123',
+cnx = mysql.connector.connect(user='admin', password='<password>',
                               host='colaberrydb.ctkwfn0vycpa.us-east-2.rds.amazonaws.com',
                               database='colaberryrdsdb')
 
