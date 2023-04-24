@@ -2,22 +2,18 @@
 
 # Import the required libraries and set up the AWS Glue context:
 
-import sys
 import json
-import os
-from awsglue.utils import getResolvedOptions
+import logging
+from datetime import datetime
+
+import boto3
+import pymysql
 from awsglue.context import GlueContext
-from awsglue.dynamicframe import DynamicFrame
+from awsglue.utils import getResolvedOptions
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
-import boto3
-import logging
-from datetime import datetime
 from pytz import timezone
-import time
-import pymysql
-import base64
 
 # define the CloudWatch Log Group and Log Stream names
 log_group_name = '/aws/lambda/ColaberryLambdaTriggersGlueandEMRWeatherDataIngestion'
@@ -89,9 +85,6 @@ logger.addHandler(cloudwatch_handler)
 
 
 def main():
-    spark = SparkSession.builder \
-        .appName("colaberrycodechallengegluejobforweatherdata") \
-        .getOrCreate()
     args = getResolvedOptions(sys.argv, ['JOB_NAME', 's3_input_path', 's3_file_name', 'db_name_rds_instance',
                                          'host_rds_instance', 'jdbc_url', 'password_rds_instance', 'user_rds_instance'])
 
@@ -130,15 +123,12 @@ def main():
     logger.info(schema_json)
 
     # write data to the MySQL database on AWS RDS using Data API
-    table_name = 'weather_data'
 
     weather_dynamic_frames = []
     for s3_object in s3_objects['Contents']:
         if s3_object['Key'].endswith(".txt"):
             file_location = "s3://{}/{}".format(input_bucket, s3_object['Key'])
             logger.info(f"Reading file {file_location}")
-            # weather_dynamic_frame = glueContext.create_dynamic_frame_from_options(
-            #     "s3", {"paths": [file_location]}, format="csv", format_options={"header": "false", "delimiter": "\t"})
             weather_dynamic_frame = glueContext.create_dynamic_frame_from_options(
                 "s3",
                 {"paths": [file_location]},
@@ -182,13 +172,7 @@ def main():
     weather_df.printSchema()
 
     # write data to Aurora MySQL DB table on RDS using JDBC
-    jdbc_url = args['jdbc_url']
     table_name = "weather_data"
-    properties = {
-        "user": args['user_rds_instance'],
-        "password": args['password_rds_instance'],
-        "driver": "com.mysql.jdbc.Driver"
-    }
 
     # create connection to the MySQL database on AWS RDS
     connection = pymysql.connect(
@@ -221,8 +205,8 @@ def main():
             min_temp DOUBLE NOT NULL,
             precipitation DOUBLE NOT NULL,
             station_id VARCHAR(30) NOT NULL,
-            created_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-            updated_timestamp TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
+            created_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             ) ENGINE=InnoDB;
             """
             # create a cursor object
@@ -362,7 +346,8 @@ def main():
     logger.info("Number of records after ingestion process :: ")
     logger.info(post_count)
     logger.info(
-        f"Number of records after ingestion process - Number of records before ingestion process or total number of records ingested: {post_count - pre_count}")
+        f"Number of records after ingestion process - Number of records before ingestion process or total number of "
+        f"records ingested: {post_count - pre_count}")
     logger.info(f"Time taken to ingest the records : {end_time - start_time}")
 
     # cleanup resources
