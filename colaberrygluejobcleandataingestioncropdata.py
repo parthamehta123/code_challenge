@@ -95,8 +95,6 @@ def main():
     args = getResolvedOptions(sys.argv, ['JOB_NAME', 's3_input_path', 's3_file_name', 'db_name_rds_instance',
                                          'host_rds_instance', 'jdbc_url', 'password_rds_instance', 'user_rds_instance'])
 
-    glueContext = GlueContext(SparkContext.getOrCreate())
-
     schema = StructType([
         StructField("year", IntegerType(), False),
         StructField("corn_yield", DoubleType(), False),
@@ -172,8 +170,8 @@ def main():
             CREATE TABLE crop_data (
             year INT NOT NULL,
             corn_yield DOUBLE NOT NULL,
-            created_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-            updated_timestamp TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
+            created_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             ) ENGINE=InnoDB;
             """
             # create a cursor object
@@ -313,7 +311,8 @@ def main():
     logger.info("Number of records after ingestion process :: ")
     logger.info(post_count)
     logger.info(
-        f"Number of records after ingestion process - Number of records before ingestion process or total number of records ingested: {post_count - pre_count}")
+        f"Number of records after ingestion process - Number of records before ingestion process or total number of "
+        f"records ingested: {post_count - pre_count}")
     logger.info(f"Time taken to ingest the records : {end_time - start_time}")
 
     # cleanup resources
