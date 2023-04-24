@@ -18,10 +18,18 @@ spark = SparkSession.builder \
 aurora_url = "jdbc:mysql://colaberrydb.ctkwfn0vycpa.us-east-2.rds.amazonaws.com:3306/colaberryrdsdb"
 properties = {
     "user": "admin",
-    "password": "<password>",
+    "password": "Password123",
     "driver": "com.mysql.jdbc.Driver"
 }
-weather_data = spark.read.jdbc(url=aurora_url, table="weather_data", properties=properties)
+
+# weather_data = spark.read.jdbc(url=aurora_url, table="weather_data", properties=properties)
+weather_data = spark.read.format("jdbc") \
+    .option("driver", properties["driver"]) \
+    .option("url", aurora_url) \
+    .option("query", "select * from weather_data") \
+    .option("user", properties["user"]) \
+    .option("password", properties["password"]) \
+    .load()
 
 weather_data.show()
 
@@ -44,8 +52,8 @@ table_schema = """
         avg_max_temp DOUBLE,
         avg_min_temp DOUBLE,
         total_precipitation DOUBLE,
-        created_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-        updated_timestamp TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+        created_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         PRIMARY KEY (year, station_id)
     ) ENGINE=InnoDB;
 """
@@ -55,8 +63,11 @@ spark.read.format("jdbc").options(url=aurora_url, driver=properties["driver"], u
                                   password=properties["password"],
                                   dbtable="(SELECT 1) tmp").load().createOrReplaceTempView("tmp_table")
 spark.sql(table_schema)
-spark.table("tmp_table").write.jdbc(url=aurora_url, table="weather_statistics", mode="overwrite", properties=properties,
-                                    schema=table_schema)
+# # Create a DataFrame with the specified schema
+# empty_df = spark.createDataFrame([], schema)
+#
+# # Write the DataFrame to the Aurora database
+# empty_df.write.jdbc(url=aurora_url, table="weather_statistics", mode="overwrite", properties=properties)
 
 # Calculate the start and end years
 start_year = weather_data.select(to_date("date").alias("date")).agg({"date": "min"}).collect()[0][0].year
@@ -69,17 +80,20 @@ statistics = weather_data.filter(
     .agg(avg("max_temp").alias("avg_max_temp"), avg("min_temp").alias("avg_min_temp"),
          sum("precipitation").alias("total_precipitation"))
 
-statistics.show()
+statistics.write.jdbc(url=aurora_url, table="weather_statistics", mode="overwrite", properties=properties)
 
 statistics.coalesce(1).write.format("csv").option("header", "true").save("s3a://colaberrycodechallenges3"
                                                                          "/emrsparkcodeoutputlocation/")
 
-# Write the results to Redshift using JDBC
+print("Weather Statistics Data Calculated and Stats are Written to the MySQL DB")
+statistics.show()
+
+# # Write the results to Redshift using JDBC
 redshift_url = "jdbc:redshift://colaberryredshiftnewcluster.803471918786.us-east-2.redshift-serverless.amazonaws.com" \
                ":5439/dev"
 redshift_properties = {
     "user": "admin",
-    "password": "<password>",
+    "password": "MadaraItachi123",
     "driver": "com.amazon.redshift.jdbc.Driver"
 }
 statistics_writer = DataFrameWriter(statistics)
