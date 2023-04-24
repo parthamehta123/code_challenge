@@ -2,22 +2,18 @@
 
 # Import the required libraries and set up the AWS Glue context:
 
-import sys
 import json
-import os
-from awsglue.utils import getResolvedOptions
+import logging
+from datetime import datetime
+
+import boto3
+import pymysql
 from awsglue.context import GlueContext
-from awsglue.dynamicframe import DynamicFrame
+from awsglue.utils import getResolvedOptions
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
-import boto3
-import logging
-from datetime import datetime
 from pytz import timezone
-import time
-import pymysql
-import base64
 
 # define the CloudWatch Log Group and Log Stream names
 log_group_name = '/aws/lambda/ColaberryLambdaTriggersGlueandEMR'
@@ -92,9 +88,8 @@ def main():
     spark = SparkSession.builder \
         .appName("colaberrycodechallengegluejobforcropdata") \
         .getOrCreate()
-    args = getResolvedOptions(sys.argv, ['JOB_NAME', 's3_input_path'])
-
-    glueContext = GlueContext(SparkContext.getOrCreate())
+    args = getResolvedOptions(sys.argv, ['JOB_NAME', 's3_input_path', 's3_file_name', 'db_name_rds_instance',
+                                         'host_rds_instance', 'jdbc_url', 'password_rds_instance', 'user_rds_instance'])
 
     schema = StructType([
         StructField("year", IntegerType(), False),
@@ -138,10 +133,10 @@ def main():
 
     # create connection to the MySQL database on AWS RDS
     connection = pymysql.connect(
-        host='colaberrydb.ctkwfn0vycpa.us-east-2.rds.amazonaws.com',
-        user='admin',
-        password='<password>',
-        db='colaberryrdsdb',
+        host=args['host_rds_instance'],
+        user=args['user_rds_instance'],
+        password=args['password_rds_instance'],
+        db=args['db_name_rds_instance'],
         charset='utf8mb4',
         cursorclass=pymysql.cursors.DictCursor
     )
@@ -173,8 +168,8 @@ def main():
             CREATE TABLE crop_data (
             year INT NOT NULL,
             corn_yield DOUBLE NOT NULL,
-            created_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-            updated_timestamp TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
+            created_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             ) ENGINE=InnoDB;
             """
             # create a cursor object
@@ -195,10 +190,10 @@ def main():
     pre_count = None
     try:
         connection = pymysql.connect(
-            host='colaberrydb.ctkwfn0vycpa.us-east-2.rds.amazonaws.com',
-            user='admin',
-            password='<password>',
-            db='colaberryrdsdb',
+            host=args['host_rds_instance'],
+            user=args['user_rds_instance'],
+            password=args['password_rds_instance'],
+            db=args['db_name_rds_instance'],
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor
         )
@@ -222,10 +217,10 @@ def main():
     try:
         # create a connection and cursor objects
         connection = pymysql.connect(
-            host='colaberrydb.ctkwfn0vycpa.us-east-2.rds.amazonaws.com',
-            user='admin',
-            password='<password>',
-            db='colaberryrdsdb',
+            host=args['host_rds_instance'],
+            user=args['user_rds_instance'],
+            password=args['password_rds_instance'],
+            db=args['db_name_rds_instance'],
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor
         )
@@ -249,12 +244,12 @@ def main():
             logger.info("Unique constraint added to year column")
             # write data to the MySQL database on AWS RDS using JDBC
             # create a JDBC URL for the MySQL database on AWS RDS
-            jdbc_url = "jdbc:mysql://colaberrydb.ctkwfn0vycpa.us-east-2.rds.amazonaws.com:3306/colaberryrdsdb"
+            jdbc_url = args['jdbc_url']
 
             # set properties for the JDBC driver
             properties = {
-                "user": "admin",
-                "password": "<password>",
+                "user": args['user_rds_instance'],
+                "password": args['password_rds_instance'],
                 "driver": "com.mysql.jdbc.Driver"
             }
 
@@ -280,10 +275,10 @@ def main():
     post_count = None
     try:
         connection = pymysql.connect(
-            host='colaberrydb.ctkwfn0vycpa.us-east-2.rds.amazonaws.com',
-            user='admin',
-            password='<password>',
-            db='colaberryrdsdb',
+            host=args['host_rds_instance'],
+            user=args['user_rds_instance'],
+            password=args['password_rds_instance'],
+            db=args['db_name_rds_instance'],
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor
         )
@@ -314,7 +309,8 @@ def main():
     logger.info("Number of records after ingestion process :: ")
     logger.info(post_count)
     logger.info(
-        f"Number of records after ingestion process - Number of records before ingestion process or total number of records ingested: {post_count - pre_count}")
+        f"Number of records after ingestion process - Number of records before ingestion process or total number of "
+        f"records ingested: {post_count - pre_count}")
     logger.info(f"Time taken to ingest the records : {end_time - start_time}")
 
     # Cleaning, Transforming and Ingesting Weather Data Right Now and Writing this Data to Aurora MySQL DB Table on RDS)
@@ -352,15 +348,12 @@ def main():
     logger.info(schema_json)
 
     # write data to the MySQL database on AWS RDS using Data API
-    table_name = 'weather_data'
 
     weather_dynamic_frames = []
     for s3_object in s3_objects['Contents']:
         if s3_object['Key'].endswith(".txt"):
             file_location = "s3://{}/{}".format(input_bucket, s3_object['Key'])
             logger.info(f"Reading file {file_location}")
-            # weather_dynamic_frame = glueContext.create_dynamic_frame_from_options(
-            #     "s3", {"paths": [file_location]}, format="csv", format_options={"header": "false", "delimiter": "\t"})
             weather_dynamic_frame = glueContext.create_dynamic_frame_from_options(
                 "s3",
                 {"paths": [file_location]},
@@ -404,20 +397,14 @@ def main():
     weather_df.printSchema()
 
     # write data to Aurora MySQL DB table on RDS using JDBC
-    jdbc_url = "jdbc:mysql://colaberrydb.ctkwfn0vycpa.us-east-2.rds.amazonaws.com:3306/colaberryrdsdb"
     table_name = "weather_data"
-    properties = {
-        "user": "admin",
-        "password": "<password>",
-        "driver": "com.mysql.jdbc.Driver"
-    }
 
     # create connection to the MySQL database on AWS RDS
     connection = pymysql.connect(
-        host='colaberrydb.ctkwfn0vycpa.us-east-2.rds.amazonaws.com',
-        user='admin',
-        password='<password>',
-        db='colaberryrdsdb',
+        host=args['host_rds_instance'],
+        user=args['user_rds_instance'],
+        password=args['password_rds_instance'],
+        db=args['db_name_rds_instance'],
         charset='utf8mb4',
         cursorclass=pymysql.cursors.DictCursor
     )
@@ -443,8 +430,8 @@ def main():
             min_temp DOUBLE NOT NULL,
             precipitation DOUBLE NOT NULL,
             station_id VARCHAR(30) NOT NULL,
-            created_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-            updated_timestamp TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
+            created_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             ) ENGINE=InnoDB;
             """
             # create a cursor object
@@ -465,10 +452,10 @@ def main():
     pre_count = None
     try:
         connection = pymysql.connect(
-            host='colaberrydb.ctkwfn0vycpa.us-east-2.rds.amazonaws.com',
-            user='admin',
-            password='<password>',
-            db='colaberryrdsdb',
+            host=args['host_rds_instance'],
+            user=args['user_rds_instance'],
+            password=args['password_rds_instance'],
+            db=args['db_name_rds_instance'],
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor
         )
@@ -492,10 +479,10 @@ def main():
     try:
         # create a connection and cursor objects
         connection = pymysql.connect(
-            host='colaberrydb.ctkwfn0vycpa.us-east-2.rds.amazonaws.com',
-            user='admin',
-            password='<password>',
-            db='colaberryrdsdb',
+            host=args['host_rds_instance'],
+            user=args['user_rds_instance'],
+            password=args['password_rds_instance'],
+            db=args['db_name_rds_instance'],
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor
         )
@@ -519,12 +506,12 @@ def main():
             logger.info("Unique constraint added to station_id and date column")
             # write data to the MySQL database on AWS RDS using JDBC
             # create a JDBC URL for the MySQL database on AWS RDS
-            jdbc_url = "jdbc:mysql://colaberrydb.ctkwfn0vycpa.us-east-2.rds.amazonaws.com:3306/colaberryrdsdb"
+            jdbc_url = args['jdbc_url']
 
             # set properties for the JDBC driver
             properties = {
-                "user": "admin",
-                "password": "Password123",
+                "user": args['user_rds_instance'],
+                "password": args['password_rds_instance'],
                 "driver": "com.mysql.jdbc.Driver"
             }
 
@@ -550,10 +537,10 @@ def main():
     post_count = None
     try:
         connection = pymysql.connect(
-            host='colaberrydb.ctkwfn0vycpa.us-east-2.rds.amazonaws.com',
-            user='admin',
-            password='<password>',
-            db='colaberryrdsdb',
+            host=args['host_rds_instance'],
+            user=args['user_rds_instance'],
+            password=args['password_rds_instance'],
+            db=args['db_name_rds_instance'],
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor
         )
@@ -584,7 +571,8 @@ def main():
     logger.info("Number of records after ingestion process :: ")
     logger.info(post_count)
     logger.info(
-        f"Number of records after ingestion process - Number of records before ingestion process or total number of records ingested: {post_count - pre_count}")
+        f"Number of records after ingestion process - Number of records before ingestion process or total number of "
+        f"records ingested: {post_count - pre_count}")
     logger.info(f"Time taken to ingest the records : {end_time - start_time}")
 
     # cleanup resources
