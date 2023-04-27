@@ -135,7 +135,14 @@ def lambda_handler(event, context):
                     'ScriptBootstrapAction': {
                         'Path': 's3://colaberrycodefilelocationforemr/copymysqljar.sh'
                     }
-                }],
+                },
+                    {
+                        'Name': 'Install PyMySQL',
+                        'ScriptBootstrapAction': {
+                            'Path': 's3://colaberrycodefilelocationforemr/install_pymysql.sh'
+                        }
+                    }
+                ],
                 VisibleToAllUsers=True,
                 JobFlowRole='EMR_EC2_DefaultRole',
                 ServiceRole='EMR_DefaultRole',
