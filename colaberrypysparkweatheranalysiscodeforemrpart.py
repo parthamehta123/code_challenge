@@ -19,7 +19,7 @@ spark = SparkSession.builder \
 aurora_url = "jdbc:mysql://colaberrydb.ctkwfn0vycpa.us-east-2.rds.amazonaws.com:3306/colaberryrdsdb"
 properties = {
     "user": "admin",
-    "password": "TelevSudha123",
+    "password": "<Password>",
     "driver": "com.mysql.jdbc.Driver"
 }
 
@@ -54,7 +54,7 @@ spark.read.format("jdbc").options(url=aurora_url, driver=properties["driver"], u
 connection = pymysql.connect(
     host='colaberrydb.ctkwfn0vycpa.us-east-2.rds.amazonaws.com',
     user='admin',
-    password='TelevSudha123',
+    password='<Password>',
     db='colaberryrdsdb',
     charset='utf8mb4',
     cursorclass=pymysql.cursors.DictCursor
@@ -135,7 +135,7 @@ redshift_url = "jdbc:redshift://colaberryredshiftnewcluster.803471918786.us-east
                ":5439/dev"
 redshift_properties = {
     "user": "admin",
-    "password": "MadaraItachi123",
+    "password": "<Password>",
     "driver": "com.amazon.redshift.jdbc.Driver"
 }
 statistics_writer = DataFrameWriter(statistics)
