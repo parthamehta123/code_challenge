@@ -10,7 +10,6 @@ import boto3
 import pymysql
 from awsglue.context import GlueContext
 from awsglue.utils import getResolvedOptions
-from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
 from pytz import timezone
@@ -206,7 +205,7 @@ def main():
             precipitation DOUBLE NOT NULL,
             station_id VARCHAR(30) NOT NULL,
             created_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            updated_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            updated_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             ) ENGINE=InnoDB;
             """
             # create a cursor object

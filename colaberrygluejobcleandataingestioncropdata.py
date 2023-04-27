@@ -2,22 +2,16 @@
 
 # Import the required libraries and set up the AWS Glue context:
 
-import sys
-import json
-import os
+import logging
+from datetime import datetime
+
+import boto3
+import pymysql
 from awsglue.utils import getResolvedOptions
-from awsglue.context import GlueContext
-from awsglue.dynamicframe import DynamicFrame
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
-import boto3
-import logging
-from datetime import datetime
 from pytz import timezone
-import time
-import pymysql
-import base64
 
 # define the CloudWatch Log Group and Log Stream names
 log_group_name = '/aws/lambda/ColaberryLambdaTriggersGlueandEMRCropDataIngestion'
