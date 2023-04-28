@@ -162,4 +162,8 @@ Please note that these numbers are approximate and may vary based on specific de
 
 ***Screenshot attached For Glue Job Run Summary/Page***
 
+***Once Glue Job is successful, it triggers EMR and while EMR job / cluster is executing it's task it takes the code from s3 to calculate weather statistics by reading the data from weather_data table which was created to ingest the original data from our data lake i.e S3 to RDS MySQL DB and writes this data with statistics to weather_statistics table in the Redshift Cluster's dev DB. Below is the screenshot for successful completion of all the steps after which EMR gets terminated as it has completed it's task.***
+
+![image](https://user-images.githubusercontent.com/25328046/235262904-94249244-e896-4b40-864d-1a7e9cb10094.png)
+
 <img width="1792" alt="image" src="https://user-images.githubusercontent.com/25328046/232839110-4470f1b0-dfe5-4231-8e84-ac257a19afb4.png">
